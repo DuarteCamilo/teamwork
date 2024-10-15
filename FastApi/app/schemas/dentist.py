@@ -9,26 +9,30 @@ class Dentist(BaseModel):
     """
     Dentist schema for FastAPI application.
     Attributes:
-      id_odontologo (int): Unique identifier for the dentist, aliased as "Id_odontologo".
-      nombre (str): First name of the dentist, with a maximum length of 40 characters.
-      apellido (str): Last name of the dentist, with a maximum length of 40 characters.
-      matricula (str): Registration number of the dentist, with a maximum length of 40 characters.
-      id_estado (int): Identifier for the state, aliased as "id_estado".
-      dias_inactividad (int): Number of inactive days, aliased as "dias_inactividad".
-      id_usuario (int): User identifier, aliased as "id_usuario".
-      id_horario (int): Schedule identifier, aliased as "id_horario".
+      id_dentist (int): Unique identifier for the dentist.
+      name (str): First name of the dentist, with a maximum length of 40 characters.
+      lastname (str): Last name of the dentist, with a maximum length of 40 characters.
+      licence (str): License number of the dentist, with a maximum length of 40 characters.
+      id_state (int): Identifier for the state where the dentist is licensed.
+      inactive_days (int): Number of inactive days for the dentist.
+      id_user (int): Identifier for the associated user.
+      id_schedule (int): Identifier for the associated schedule.
     Config:
       orm_mode (bool): Enables ORM mode for compatibility with ORMs.
     """
 
-    id_odontologo: int = Field(..., alias="Id_odontologo")
-    nombre: str = Field(..., max_length=40)
-    apellido: str = Field(..., max_length=40)
-    matricula: str = Field(..., max_length=40)
-    id_estado: int = Field(..., alias="id_estado")
-    dias_inactividad: int = Field(..., alias="dias_inactividad")
-    id_usuario: int = Field(..., alias="id_usuario")
-    id_horario: int = Field(..., alias="id_horario")
+    id_dentist: int
+    name: str = Field(..., max_length=40)
+    last_name: str = Field(..., max_length=40)
+    licence: str = Field(..., max_length=40)
+    id_state: int
+    inactive_days: int
+    id_user: int
+    id_schedule: int
 
     class Config:
+        """
+        Configuration class for Pydantic models.
+        """
+
         orm_mode = True
