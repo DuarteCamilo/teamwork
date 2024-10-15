@@ -20,13 +20,14 @@ Dependencies:
     - Body: FastAPI dependency for parsing request bodies.
 """
 
-from fastapi import APIRouter, Body
-
 # pylint: disable=import-error
-from database import DentistModel
-from .models.dentist import Dentist
+from config.database import DentistModel
+from schemas.dentist import Dentist
 
 # pylint: enable=import-error
+
+from peewee import IntegrityError
+from fastapi import APIRouter, Body
 
 dentist_route = APIRouter()
 
@@ -43,16 +44,19 @@ def create_dentists(dentist: Dentist = Body(...)):
         None
 
     """
-    DentistModel.create(
-        name=dentist.name,
-        last_name=dentist.last_name,
-        license=dentist.licence,
-        id_status=dentist.id_status,
-        inactive_days=dentist.inactive_days,
-        id_user=dentist.id_user,
-        id_schedule=dentist.id_schedule
-    )
-    return {"message": "Dentist created successfully"}
+    try:
+        DentistModel.create(
+            name=dentist.name,
+            last_name=dentist.last_name,
+            license=dentist.licence,
+            id_status=dentist.id_status,
+            inactive_days=dentist.inactive_days,
+            id_user=dentist.id_user,
+            id_schedule=dentist.id_schedule,
+        )
+        return {"message": "Dentist created successfully"}
+    except IntegrityError:
+        return {"error": "Dentist already exists"}
 
 
 @dentist_route.get("/dentists")
@@ -66,7 +70,7 @@ def get_dentists():
     Returns:
         list: A list of dictionaries, each representing a dentist.
     """
-    dentist = DentistModel.select().where(DentistModel.id > 0).dicts()
+    dentist = DentistModel.select().where(DentistModel.id_dentist > 0).dicts()
     return list(dentist)
 
 
@@ -84,7 +88,7 @@ def get_dentist(dentist_id: int):
     """
     print(dentist_id)
     try:
-        dentist = DentistModel.get(DentistModel.id == dentist_id)
+        dentist = DentistModel.get(DentistModel.id_dentist == dentist_id)
         return dentist
     except DentistModel.DoesNotExist:
         return {"error": "Dentist not found"}
@@ -101,18 +105,21 @@ def update_dentist(dentist_id: int, dentist: Dentist = Body(...)):
 
     Returns:
         None
-    
+
     """
-    DentistModel.update(
-        name=dentist.name,
-        last_name=dentist.last_name,
-        license=dentist.licence,
-        id_status=dentist.id_status,
-        inactive_days=dentist.inactive_days,
-        id_user=dentist.id_user,
-        id_schedule=dentist.id_schedule
-    ).where(DentistModel.id == dentist_id).execute()
-    return {"message": "Dentist updated successfully"}
+    try:
+        DentistModel.update(
+            name=dentist.name,
+            last_name=dentist.last_name,
+            license=dentist.licence,
+            id_status=dentist.id_status,
+            inactive_days=dentist.inactive_days,
+            id_user=dentist.id_user,
+            id_schedule=dentist.id_schedule,
+        ).where(DentistModel.id_dentist == dentist_id).execute()
+        return {"message": "Dentist updated successfully"}
+    except DentistModel.DoesNotExist:
+        return {"error": "Dentist not found"}
 
 
 @dentist_route.delete("/dentists/{dentist_id}")
@@ -126,5 +133,8 @@ def delete_dentist(dentist_id: int):
     Returns:
         None
     """
-    DentistModel.delete().where(DentistModel.id == dentist_id).execute()
-    return {"message": "Dentist deleted successfully"}
+    try:
+        DentistModel.delete().where(DentistModel.id_dentist == dentist_id).execute()
+        return {"message": "Dentist deleted successfully"}
+    except DentistModel.DoesNotExist:
+        return {"error": "Dentist not found"}
