@@ -1,28 +1,23 @@
 """
-This module defines the routes for dentist-related operations in the FastAPI applidentistion.
+This module defines the API routes for managing dentists in the application.
 Routes:
     - POST /dentists/: Create a new dentist.
-    - GET /dentists: Retrieve a list of all dentists.
-    - GET /dentists/{dentist_id}: Retrieve a specific dentist by their ID.
-    - PUT /dentists/{dentist_id}: Update a specific dentist by their ID.
-    - DELETE /dentists/{dentist_id}: Delete a specific dentist by their ID.
-Functions:
-    - create_dentists(dentist: Dentist): Creates a new dentist with the provided details.
-    - get_dentists(): Retrieves a list of all dentists from the database.
-    - get_dentist(dentist_id: int): Retrieves a specific dentist by their ID. 
-      Returns an error message if the dentist is not found.
-    - update_dentist(dentist_id: int, dentist: Dentist): Updates a specific dentist by their ID.
-    - delete_dentist(dentist_id: int): Deletes a specific dentist by their ID.
+    - GET /dentists: Retrieve a list of dentists.
+    - GET /dentists/{dentist_id}: Retrieve a dentist by their ID.
+    - PUT /dentists/{dentist_id}: Update a dentist by their ID.
+    - DELETE /dentists/{dentist_id}: Delete a dentist by their ID.
 Dependencies:
-    - DentistModel: The database model for dentists.
-    - Dentist: The Pydantic model for dentist data validation.
-    - APIRouter: FastAPI router for defining routes.
-    - Body: FastAPI dependency for parsing request bodies.
+    - config.database.DentistModel: The database model for dentists.
+    - schemas.dentist.DentistCreate: Schema for creating a dentist.
+    - schemas.dentist.DentistUpdate: Schema for updating a dentist.
+    - peewee.IntegrityError: Exception raised for database integrity errors.
+    - fastapi.APIRouter: FastAPI router for defining routes.
+    - fastapi.Body: FastAPI dependency for request body parameters.
 """
 
 # pylint: disable=import-error
 from config.database import DentistModel
-from schemas.dentist import Dentist
+from schemas.dentist import DentistCreate, DentistUpdate
 
 # pylint: enable=import-error
 
@@ -33,7 +28,7 @@ dentist_route = APIRouter()
 
 
 @dentist_route.post("/dentists/")
-def create_dentists(dentist: Dentist = Body(...)):
+def create_dentists(dentist: DentistCreate = Body(...)):
     """
     Create a new dentist.
 
@@ -95,7 +90,7 @@ def get_dentist(dentist_id: int):
 
 
 @dentist_route.put("/dentists/{dentist_id}")
-def update_dentist(dentist_id: int, dentist: Dentist = Body(...)):
+def update_dentist(dentist_id: int, dentist: DentistUpdate = Body(...)):
     """
     Update a dentist by their ID.
 
