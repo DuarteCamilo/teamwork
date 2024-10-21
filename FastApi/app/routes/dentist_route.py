@@ -48,8 +48,8 @@ def create_dentists(dentist: Dentist = Body(...)):
         DentistModel.create(
             name=dentist.name,
             last_name=dentist.last_name,
-            license=dentist.licence,
-            id_status=dentist.id_status,
+            license=dentist.license,
+            id_state=dentist.id_state,
             inactive_days=dentist.inactive_days,
             id_user=dentist.id_user,
             id_schedule=dentist.id_schedule,
@@ -111,8 +111,8 @@ def update_dentist(dentist_id: int, dentist: Dentist = Body(...)):
         DentistModel.update(
             name=dentist.name,
             last_name=dentist.last_name,
-            license=dentist.licence,
-            id_status=dentist.id_status,
+            license=dentist.license,
+            id_state=dentist.id_state,
             inactive_days=dentist.inactive_days,
             id_user=dentist.id_user,
             id_schedule=dentist.id_schedule,
