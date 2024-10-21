@@ -31,10 +31,8 @@ dentist_route = APIRouter()
 def create_dentists(dentist: DentistCreate = Body(...)):
     """
     Create a new dentist.
-
     Args:
         dentist (Dentist): The dentist object containing the dentistname, color, and age.
-
     Returns:
         None
     """
@@ -72,10 +70,8 @@ def get_dentists():
 def get_dentist(dentist_id: int):
     """
     Retrieve a dentist by their ID.
-
     Args:
         dentist_id (int): The ID of the dentist to retrieve.
-
     Returns:
         DentistModel: The dentist object if found.
         dict: An error message if the dentist is not found.
@@ -92,14 +88,11 @@ def get_dentist(dentist_id: int):
 def update_dentist(dentist_id: int, dentist: DentistUpdate = Body(...)):
     """
     Update a dentist by their ID.
-
     Args:
         dentist_id (int): The ID of the dentist to update.
         dentist (Dentist): The updated dentist object containing the dentistname, color, and age.
-
     Returns:
         None
-
     """
     try:
         DentistModel.update(
@@ -120,10 +113,8 @@ def update_dentist(dentist_id: int, dentist: DentistUpdate = Body(...)):
 def delete_dentist(dentist_id: int):
     """
     Delete a dentist by their ID.
-
     Args:
         dentist_id (int): The ID of the dentist to delete.
-
     Returns:
         None
     """
