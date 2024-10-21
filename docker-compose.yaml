@@ -32,6 +32,7 @@ services:
   fastapi:
     build: 
       context: ./FastApi
+
       dockerfile: Dockerfile
     container_name: backend
     restart: always
