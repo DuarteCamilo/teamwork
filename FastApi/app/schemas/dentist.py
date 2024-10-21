@@ -36,3 +36,27 @@ class Dentist(BaseModel):
         """
 
         orm_mode = True
+
+
+class DentistCreate(BaseModel):
+    """Dentist schema for creating a new dentist in the FastAPI application."""
+
+    name: str = Field(..., max_length=40)
+    last_name: str = Field(..., max_length=40)
+    license: str = Field(..., max_length=40)
+    id_state: int
+    inactive_days: int
+    id_user: int
+    id_schedule: int
+
+
+class DentistUpdate(BaseModel):
+    """Dentist schema for updating an existing dentist in the FastAPI application."""
+
+    name: str = Field(None, max_length=40)
+    last_name: str = Field(None, max_length=40)
+    license: str = Field(None, max_length=40)
+    id_state: int
+    inactive_days: int
+    id_user: int
+    id_schedule: int
