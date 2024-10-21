@@ -37,7 +37,6 @@ def create_dentists(dentist: DentistCreate = Body(...)):
 
     Returns:
         None
-
     """
     try:
         DentistModel.create(
