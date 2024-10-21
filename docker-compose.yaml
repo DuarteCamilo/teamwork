@@ -31,7 +31,8 @@ services:
   # - fastapi refers to the container where the application backend will be stored.
   fastapi:
     build: 
-      context: ./FastAPI
+      context: ./FastApi
+
       dockerfile: Dockerfile
     container_name: backend
     restart: always
