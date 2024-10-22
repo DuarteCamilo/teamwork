@@ -14,7 +14,6 @@ from schemas.patient import PatientCreate, PatientUpdate
 from peewee import IntegrityError
 from fastapi import Body
 
-
 def create_patient(patient: PatientCreate = Body(...)):
     """
     Create a new patient.
@@ -38,7 +37,6 @@ def create_patient(patient: PatientCreate = Body(...)):
     except IntegrityError:
         return {"error": "Patient already exists"}
 
-
 def get_patients():
     """
     Retrieve a list of patients from the database.
@@ -51,7 +49,6 @@ def get_patients():
     """
     patients = PatientModel.select().where(PatientModel.id_patient > 0).dicts()
     return list(patients)
-
 
 def get_patient(patient_id: int):
     """
@@ -69,7 +66,6 @@ def get_patient(patient_id: int):
         return patient
     except PatientModel.DoesNotExist:
         return {"error": "Patient not found"}
-
 
 def update_patient(patient_id: int, patient: PatientUpdate = Body(...)):
     """
@@ -93,7 +89,6 @@ def update_patient(patient_id: int, patient: PatientUpdate = Body(...)):
         return {"message": "Patient updated successfully"}
     except PatientModel.DoesNotExist:
         return {"error": "Patient not found"}
-
 
 def delete_patient(patient_id: int):
     """

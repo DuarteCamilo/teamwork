@@ -16,8 +16,8 @@ Dependencies:
 """
 
 # pylint: disable=import-error
-from config.database import DentistModel
 from schemas.dentist import DentistCreate, DentistUpdate
+from services import dentist_service
 
 # pylint: enable=import-error
 
@@ -36,20 +36,7 @@ def create_dentists(dentist: DentistCreate = Body(...)):
     Returns:
         None
     """
-    try:
-        DentistModel.create(
-            name=dentist.name,
-            last_name=dentist.last_name,
-            license=dentist.license,
-            id_state=dentist.id_state,
-            inactive_days=dentist.inactive_days,
-            id_user=dentist.id_user,
-            id_schedule=dentist.id_schedule,
-        )
-        return {"message": "Dentist created successfully"}
-    except IntegrityError:
-        return {"error": "Dentist already exists"}
-
+    return dentist_service.create_dentists(dentist)
 
 @dentist_route.get("/dentists")
 def get_dentists():
@@ -62,9 +49,7 @@ def get_dentists():
     Returns:
         list: A list of dictionaries, each representing a dentist.
     """
-    dentist = DentistModel.select().where(DentistModel.id_dentist > 0).dicts()
-    return list(dentist)
-
+    return dentist_service.get_dentists()
 
 @dentist_route.get("/dentists/{dentist_id}")
 def get_dentist(dentist_id: int):
@@ -76,12 +61,7 @@ def get_dentist(dentist_id: int):
         DentistModel: The dentist object if found.
         dict: An error message if the dentist is not found.
     """
-    print(dentist_id)
-    try:
-        dentist = DentistModel.get(DentistModel.id_dentist == dentist_id)
-        return dentist
-    except DentistModel.DoesNotExist:
-        return {"error": "Dentist not found"}
+    return dentist_service.get_dentist(dentist_id)
 
 
 @dentist_route.put("/dentists/{dentist_id}")
@@ -94,21 +74,8 @@ def update_dentist(dentist_id: int, dentist: DentistUpdate = Body(...)):
     Returns:
         None
     """
-    try:
-        DentistModel.update(
-            name=dentist.name,
-            last_name=dentist.last_name,
-            license=dentist.license,
-            id_state=dentist.id_state,
-            inactive_days=dentist.inactive_days,
-            id_user=dentist.id_user,
-            id_schedule=dentist.id_schedule,
-        ).where(DentistModel.id_dentist == dentist_id).execute()
-        return {"message": "Dentist updated successfully"}
-    except DentistModel.DoesNotExist:
-        return {"error": "Dentist not found"}
-
-
+    return dentist_service.update_dentist(dentist_id, dentist)
+    
 @dentist_route.delete("/dentists/{dentist_id}")
 def delete_dentist(dentist_id: int):
     """
@@ -118,8 +85,4 @@ def delete_dentist(dentist_id: int):
     Returns:
         None
     """
-    try:
-        DentistModel.delete().where(DentistModel.id_dentist == dentist_id).execute()
-        return {"message": "Dentist deleted successfully"}
-    except DentistModel.DoesNotExist:
-        return {"error": "Dentist not found"}
+    return dentist_service.delete_dentist(dentist_id)
