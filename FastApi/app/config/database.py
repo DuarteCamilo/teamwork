@@ -57,3 +57,14 @@ class PatientModel(Model):
 
         database = database
         table_name = "patients"
+
+class ShiftModel(Model):
+    """
+    ShiftModel represents a shift entity in the database.
+    """
+    id_shift = AutoField(primary_key=True)
+    date = DateField(null=True)
+    hour = IntegerField(null=True)
+    label = IntegerField(null=True)
+    id_patient = IntegerField(null= True)
+    id_dentist = IntegerField(null=True)
