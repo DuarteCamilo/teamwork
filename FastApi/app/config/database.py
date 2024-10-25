@@ -149,8 +149,7 @@ class AppointmentModel(Model):
     Appointment represents a Appointment entity in the database.
     """
     id_appointment = AutoField(primary_key=True)
-    date = DateField(null=True)
-    hour = DateTimeField(
+    date = DateTimeField(
         default=lambda: datetime.now(pytz.timezone(Colombian)))
     id_label = ForeignKeyField(labelAppointmentModel, backref='appoinment')
     id_patient = ForeignKeyField(PatientModel, backref='appoinment')
