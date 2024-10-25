@@ -1,5 +1,13 @@
-from pydantic import BaseModel, Field
+"""
+This module defines the schemas for the Patient entity in the FastAPI application.
+Classes:
+  Patient (BaseModel): Schema for a patient.
+  PatientCreate (BaseModel): Schema for creating a new patient.
+  PatientUpdate (BaseModel): Schema for updating an existing patient.
+"""
+
 from datetime import date
+from pydantic import BaseModel, Field
 
 
 class Patient(BaseModel):
@@ -29,4 +37,26 @@ class Patient(BaseModel):
         """
         Configuration class for Pydantic models.
         """
+
         orm_mode = True
+
+
+class PatientCreate(BaseModel):
+    """Patient schema for creating a new patient in the FastAPI application."""
+
+    name: str = Field(..., max_length=40)
+    last_name: str = Field(..., max_length=40)
+    address: str = Field(..., max_length=100)
+    departure_date: date
+    id_user: int
+    dni: int
+
+
+class PatientUpdate(BaseModel):
+    """Patient schema for updating an existing patient in the FastAPI application."""
+
+    name: str = Field(None, max_length=40)
+    last_name: str = Field(None, max_length=40)
+    address: str = Field(None, max_length=100)
+    departure_date: date
+    dni: int

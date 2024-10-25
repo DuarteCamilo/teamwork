@@ -1,16 +1,34 @@
+"""
+This module defines the routes for patient-related operations in the FastAPI application.
+Routes:
+    - POST /patients/: Create a new patient.
+    - GET /patients/: Retrieve a list of patients.
+    - GET /patients/{patient_id}: Retrieve a patient by their ID.
+    - PUT /patients/{patient_id}: Update a patient by their ID.
+    - DELETE /patients/{patient_id}: Delete a patient by their ID.
+Each route corresponds to a function in the patient_service module that handles the actual
+logic for creating, retrieving, updating, and deleting patients.
+Modules:
+    - schemas.patient: Contains the PatientCreate and PatientUpdate schemas.
+    - services.patient_service: Contains the service functions for patient operations.
+    - fastapi: FastAPI framework for building APIs.
+Attributes:
+    patient_route (APIRouter): The router object for patient-related routes.
+"""
+
 # pylint: disable=import-error
-from config.database import PatientModel
-from schemas.patient import Patient
+from schemas.patient import PatientCreate, PatientUpdate
+from services import patient_service
 
 # pylint: enable=import-error
 
-from peewee import IntegrityError
 from fastapi import APIRouter, Body
 
 patient_route = APIRouter()
 
+
 @patient_route.post("/patients/")
-def create_patient(patient: Patient = Body(...)):
+def create_patient(patient: PatientCreate = Body(...)):
     """
     Create a new patient.
 
@@ -20,18 +38,7 @@ def create_patient(patient: Patient = Body(...)):
     Returns:
         dict: Success or error message.
     """
-    try:
-        PatientModel.create(
-            name=patient.name,
-            last_name=patient.last_name,
-            address=patient.address,
-            departure_date=patient.departure_date,
-            id_user=patient.id_user,
-            dni=patient.dni,
-        )
-        return {"message": "Patient created successfully"}
-    except IntegrityError:
-        return {"error": "Patient already exists"}
+    return patient_service.create_patient(patient)
 
 
 @patient_route.get("/patients/")
@@ -45,8 +52,7 @@ def get_patients():
     Returns:
         list: A list of dictionaries, each representing a patient.
     """
-    patients = PatientModel.select().where(PatientModel.id_patient > 0).dicts()
-    return list(patients)
+    return patient_service.get_patients()
 
 
 @patient_route.get("/patients/{patient_id}")
@@ -61,15 +67,11 @@ def get_patient(patient_id: int):
         PatientModel: The patient object if found.
         dict: An error message if the patient is not found.
     """
-    try:
-        patient = PatientModel.get(PatientModel.id_patient == patient_id)
-        return patient
-    except PatientModel.DoesNotExist:
-        return {"error": "Patient not found"}
+    return patient_service.get_patient(patient_id)
 
 
 @patient_route.put("/patients/{patient_id}")
-def update_patient(patient_id: int, patient: Patient = Body(...)):
+def update_patient(patient_id: int, patient: PatientUpdate = Body(...)):
     """
     Update a patient by their ID.
 
@@ -80,18 +82,7 @@ def update_patient(patient_id: int, patient: Patient = Body(...)):
     Returns:
         dict: Success or error message.
     """
-    try:
-        PatientModel.update(
-            name=patient.name,
-            last_name=patient.last_name,
-            address=patient.address,
-            departure_date=patient.departure_date,
-            id_user=patient.id_user,
-            dni=patient.dni,
-        ).where(PatientModel.id_patient == patient_id).execute()
-        return {"message": "Patient updated successfully"}
-    except PatientModel.DoesNotExist:
-        return {"error": "Patient not found"}
+    return patient_service.update_patient(patient_id, patient)
 
 
 @patient_route.delete("/patients/{patient_id}")
@@ -105,8 +96,4 @@ def delete_patient(patient_id: int):
     Returns:
         dict: Success or error message.
     """
-    try:
-        PatientModel.delete().where(PatientModel.id_patient == patient_id).execute()
-        return {"message": "Patient deleted successfully"}
-    except PatientModel.DoesNotExist:
-        return {"error": "Patient not found"}
+    return patient_service.delete_patient(patient_id)
