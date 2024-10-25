@@ -58,11 +58,11 @@ class PatientModel(Model):
         database = database
         table_name = "patients"
 
-class ShiftModel(Model):
+class AppointmentModel(Model):
     """
-    ShiftModel represents a shift entity in the database.
+    Appointment represents a Appointment entity in the database.
     """
-    id_shift = AutoField(primary_key=True)
+    id_appointment = AutoField(primary_key=True)
     date = DateField(null=True)
     hour = IntegerField(null=True)
     label = IntegerField(null=True)
