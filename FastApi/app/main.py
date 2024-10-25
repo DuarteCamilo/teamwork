@@ -8,6 +8,7 @@ from config.database import database as connection
 
 from routes.dentist_route import dentist_route
 from routes.patient_route import patient_route
+from routes.user_route import user_route
 
 from fastapi import FastAPI
 
@@ -55,4 +56,11 @@ app.include_router(
     patient_route,
     prefix="/api",
     tags=["Patients"],
+)
+
+# ------------- User Routes ----------------
+app.include_router(
+    user_route,
+    prefix="/api",
+    tags=["Users"],
 )
