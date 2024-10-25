@@ -2,7 +2,7 @@
 This module sets up the database connection and defines the DentistModel.
 """
 
-from peewee import Model, MySQLDatabase, AutoField, CharField, IntegerField, DateField,ForeignKeyField, TimeField, DateTimeField
+from peewee import Model, MySQLDatabase, AutoField, CharField, IntegerField, DateField,ForeignKeyField,  DateTimeField
 from config.settings import DATABASE
 
 from datetime import datetime 
@@ -132,7 +132,8 @@ class labelAppointmentModel(Model):
     """
     id_label = AutoField(primary_key=True)
     name = CharField(max_length=100)
-    hour = IntegerField(null=True)
+    hour = DateTimeField(
+        default=lambda: datetime.now(pytz.timezone(Colombian)))
 
     class Meta:
         """
@@ -149,7 +150,8 @@ class AppointmentModel(Model):
     """
     id_appointment = AutoField(primary_key=True)
     date = DateField(null=True)
-    hour = IntegerField(null=True)
+    hour = DateTimeField(
+        default=lambda: datetime.now(pytz.timezone(Colombian)))
     id_label = ForeignKeyField(labelAppointmentModel, backref='appoinment')
     id_patient = ForeignKeyField(PatientModel, backref='appoinment')
     id_dentist = ForeignKeyField(DentistModel, backref='appoinment')
