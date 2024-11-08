@@ -1,96 +1,96 @@
-"""
-This module provides services related to user operations such as retrieving a user by email,
-verifying passwords, and logging in a user.
-Functions:
-  get_user_by_email(email: str):
-    Retrieves a user from the database by their email address.
-  verify_password(plain_password: str, hashed_password: str):
-    Verifies if the provided plain text password matches the hashed password.
-  login_user(email: str, password: str):
-    Authenticates a user by their email and password.
-    Raises HTTPException if the user is not found or the password is incorrect.
-"""
+from typing import Any
 
-import os
-from services.dentist_service import get_dentist
-from services.patient_service import get_patient
-from dotenv import load_dotenv
 from fastapi import HTTPException
-from config.database import UserModel
+from peewee import Model
 
-load_dotenv()
-
-
-def get_user_by_email(email: str):
-    """
-    Retrieve a user from the database by their email address.
-    Args:
-      email (str): The email address of the user to retrieve.
-    Returns:
-      UserModel: The user object if found, otherwise None.
-    """
-    user = UserModel.select().where(UserModel.email == email).first()
-    return user
+from app.controllers.role_controller import get_role_controller
+from app.entities.role_entity import RoleEntity
+from app.entities.user_and_role_entity import UserAndRoleEntity
+from app.entities.user_entity import UserEntity
+from app.schemas.user import User, UserCreate, UserUpdate
+from app.schemas.user_and_role import UserAndRole
+from app.services.base_service import BaseService
+from app.services.user_and_role_service import get_user_and_role_service
 
 
-def get_user_by_username(username: str):
-    """
-    Retrieve a user from the database by their username.
-    Args:
-      username (str): The username of the user to retrieve.
-    Returns:
-      UserModel: The user object if found, otherwise None.
-    """
-    user = UserModel.select().where(UserModel.username == username).first()
-    return user
+class UserService(BaseService):
+    def __init__(self):
+        super().__init__(entity_name="User", entity=UserEntity)
+
+    def create(self, model: UserCreate) -> User:
+        validate_model(self, model)
+        return update_role_ids(super().create(model))
+
+    def update(self, _id, model: UserUpdate) -> User:
+        validate_model(self, model)
+        role_ids = model.role_ids
+
+        updated_model: User = update_model(self, _id, model)
+        updated_model.role_ids = role_ids
+
+        return update_role_ids(updated_model)
 
 
-def verify_password(plain_password: str, hashed_password: str):
-    """
-    Verify if the provided plain text password matches the hashed password.
-    Args:
-      plain_password (str): The plain text password to verify.
-      hashed_password (str): The hashed password to compare against.
-    Returns:
-      bool: True if the passwords match, False otherwise.
-    """
-    return plain_password == hashed_password
+def update_model(service: UserService, _id, model: UserUpdate) -> Model:
+    allowed_fields = {
+        field: value
+        for field, value in model.model_dump(
+            exclude_defaults=True, exclude_unset=True, exclude_none=True
+        ).items()
+        if field in service.entity._meta.fields
+    }
+
+    if len(allowed_fields) > 0:
+        service.entity.update(**allowed_fields).where(
+            service.entity.id == _id
+        ).execute()
+
+    return service.get_by_id(_id)
 
 
-def login_user(email: str, username: str, password: str):
-    """
-    Authenticates a user based on email/username and password.
-    Args:
-      email (str): The email of the user. Either email or username must be provided.
-      username (str): The username of the user. Either email or username must be provided.
-      password (str): The password of the user.
-    Raises:
-      HTTPException: If neither email nor username is provided.
-      HTTPException: If password is not provided.
-      HTTPException: If the user is not found.
-      HTTPException: If the password is incorrect.
-    Returns:
-      User: The authenticated user object.
-    """
+def validate_model(service: UserService, model: UserCreate | UserUpdate):
+    if model.role_ids:
+        for role_id in model.role_ids:
+            if not RoleEntity.get_or_none(RoleEntity.id == role_id):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Role with id '{role_id}' does not exist",
+                )
 
-    if not email and not username:
-        raise HTTPException(status_code=400, detail="Email or username is required")
-    if not password:
-        raise HTTPException(status_code=400, detail="Password is required")
+    if UserEntity.get_or_none(UserEntity.email == model.email):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{service.name} with email '{model.email}' already exists",
+        )
 
-    if email:
-        user = get_user_by_email(email)
-    else:
-        user = get_user_by_username(username)
 
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not verify_password(password, user.password):
-        raise HTTPException(status_code=400, detail="Incorrect password")
+def update_role_ids(model: User):
+    if model.role_ids:
+        existing_roles: list[UserAndRole] = list(
+            UserAndRoleEntity.select().where(UserAndRoleEntity.user == model.id)
+        )
 
-    if user.role == os.getenv("DENTIST_ROLE"):
-        user.person = get_dentist(user.id_user)
-    elif user.role == os.getenv("PATIENT_ROLE"):
-        user.person = get_patient(user.id_user)
+        for user_and_role in existing_roles:
+            if user_and_role.role_id not in model.role_ids:
+                user_and_role.delete_instance()
 
-    return user
+        for role_id in model.role_ids:
+            existing_role = (
+                UserAndRoleEntity.select()
+                .where(
+                    (UserAndRoleEntity.user == model.id)
+                    & (UserAndRoleEntity.role == role_id)
+                )
+                .first()
+            )
+
+            if not existing_role:
+                UserAndRoleEntity.create(user_id=model.id, role_id=role_id)
+    return model
+
+
+user_service = UserService()
+
+
+def get_user_service():
+    return user_service

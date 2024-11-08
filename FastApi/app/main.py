@@ -1,66 +1,101 @@
-"""
-This module defines the main entry point for the FastAPI application and manages its lifespan.
-"""
+# Don't remove peeweedbevolve import, it's necessary for migrations to work!
 
 from contextlib import asynccontextmanager
-from starlette.responses import RedirectResponse
-from config.database import database as connection
 
-from routes.dentist_route import dentist_route
-from routes.patient_route import patient_route
-from routes.user_route import user_route
+import peeweedbevolve
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, RedirectResponse
 
-from fastapi import FastAPI
+from app.controllers.appointment_controller import get_appointment_controller
+from app.controllers.appointment_label_controller import (
+    get_appointment_label_controller,
+)
+from app.controllers.dentist_controller import get_dentist_controller
+from app.controllers.patient_controller import get_patient_controller
+from app.controllers.role_controller import get_role_controller
+from app.controllers.user_controller import get_user_controller
+from app.db import get_db
+from app.entities.base_entity import BaseEntity
+from app.helpers.migration_helper import get_entity_modules, get_entity_table_names
+
+db = get_db()
+app = FastAPI(title="Teamwork API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.exception_handler(RequestValidationError)
+async def custom_validation_exception_handler(_: Request, exc: RequestValidationError):
+    messages = [f'{error["loc"][1]}: {error["msg"]}' for error in exc.errors()]
+    response_content = messages[0] if len(messages) == 1 else messages
+    return JSONResponse(status_code=422, content={"detail": response_content})
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Manages the lifespan of the FastAPI application.
-    This function ensures that the database connection is open when the application starts
-    and closes it when the application shuts down.
-    """
+async def lifespan_wrapper(_: FastAPI):
+    ignored_entities = {BaseEntity}
+    ignored_entity_table_names = get_entity_table_names(ignored_entities)
 
-    if connection.is_closed():
-        connection.connect()
-    try:
-        yield
-    finally:
-        if not connection.is_closed():
-            connection.close()
+    get_entity_modules()
+    db.evolve(interactive=False, ignore_tables=ignored_entity_table_names)
+
+    yield
+
+    db.close()
 
 
-app = FastAPI(lifespan=lifespan, title="Microservice for Adios Caries")
+app.router.lifespan_context = lifespan_wrapper
 
 
 @app.get("/", include_in_schema=False)
-def read_root():
-    """
-    Root endpoint that redirects to the API documentation.
-
-    Returns:
-        RedirectResponse: A response object that redirects the client to the "/docs" URL.
-    """
+async def root():
     return RedirectResponse(url="/docs")
 
 
-# ------------- Dentist Routes -------------
 app.include_router(
-    dentist_route,
-    prefix="/api",
-    tags=["Dentists"],
+    get_user_controller().get_router(),
+    prefix="/users",
+    tags=["Users"],
 )
 
-# ------------- Patient Routes -------------
 app.include_router(
-    patient_route,
-    prefix="/api",
+    get_patient_controller().get_router(),
+    prefix="/patients",
     tags=["Patients"],
 )
 
-# ------------- User Routes ----------------
 app.include_router(
-    user_route,
-    prefix="/api",
-    tags=["Users"],
+    get_dentist_controller().get_router(),
+    prefix="/dentists",
+    tags=["Dentists"],
 )
+
+app.include_router(
+    get_appointment_controller().get_router(),
+    prefix="/appointments",
+    tags=["Appointments"],
+)
+
+app.include_router(
+    get_appointment_label_controller().get_router(),
+    prefix="/appointment_labels",
+    tags=["Appointment Labels"],
+)
+
+app.include_router(
+    get_role_controller().get_router(),
+    prefix="/roles",
+    tags=["Roles"],
+)
+
+# if __name__ == "__main__":
+#     import uvicorn
+... (3 líneas restantes)
