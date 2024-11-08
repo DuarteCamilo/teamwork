@@ -1,7 +1,3 @@
-"""
-This module contains the RoleController class, which handles role requests.
-"""
-
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -10,10 +6,6 @@ from app.services.role_service import get_role_service
 
 
 class RoleController(BaseController):
-    """
-    Provides endpoints for roles.
-    """
-
     def __init__(self):
         super().__init__(get_role_service())
 
@@ -38,8 +30,4 @@ role_controller = RoleController()
 
 
 def get_role_controller():
-    """
-    Returns the RoleController instance
-    """
-
     return role_controller

@@ -1,7 +1,3 @@
-"""
-This module defines the Peewee model for the UserAndRole entity.
-"""
-
 from peewee import AutoField, ForeignKeyField
 
 from app.entities.base_entity import BaseEntity

@@ -1,7 +1,3 @@
-""" 
-This module contains the service layer for the Dentist entity.
-"""
-
 from fastapi import HTTPException
 
 from app.entities.dentist_entity import DentistEntity
@@ -11,10 +7,6 @@ from app.services.base_service import BaseService
 
 
 class DentistService(BaseService):
-    """
-    Provides CRUD operations for the Dentist entity.
-    """
-
     def __init__(self):
         super().__init__(entity_name="Dentist", entity=DentistEntity)
 
@@ -28,10 +20,6 @@ class DentistService(BaseService):
 
 
 def validate_model(model: DentistCreate | DentistUpdate):
-    """
-    Validates the model before creating or updating a Dentist entity.
-    """
-
     if not UserEntity.get_or_none(UserEntity.id == model.user_id):
         raise HTTPException(
             status_code=400,
@@ -43,8 +31,4 @@ dentist_service = DentistService()
 
 
 def get_dentist_service():
-    """
-    Returns the DentistService instance
-    """
-
     return dentist_service

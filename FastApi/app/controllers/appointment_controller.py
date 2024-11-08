@@ -1,7 +1,3 @@
-"""
-This module contains the AppointmentController class, which handles appointment requests.
-"""
-
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -10,10 +6,6 @@ from app.services.appointment_service import get_appointment_service
 
 
 class AppointmentController(BaseController):
-    """
-    Provides endpoints for appointments.
-    """
-
     def __init__(self):
         super().__init__(get_appointment_service())
 
@@ -36,8 +28,4 @@ appointment_controller = AppointmentController()
 
 
 def get_appointment_controller():
-    """
-    Returns the AppointmentController instance.
-    """
-
     return appointment_controller
