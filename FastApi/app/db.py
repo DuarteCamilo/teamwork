@@ -1,3 +1,7 @@
+"""
+This module contains the database connection.
+"""
+
 import os
 
 from dotenv import load_dotenv
@@ -15,6 +19,10 @@ db = MySQLDatabase(
 
 
 def get_db():
+    """
+    Returns the database instance.
+    """
+
     if db.is_closed():
         db.connect()
     return db

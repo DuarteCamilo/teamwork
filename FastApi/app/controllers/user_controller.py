@@ -1,3 +1,7 @@
+"""
+This module contains the User Controller class, which handles user requests.
+"""
+
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -6,6 +10,10 @@ from app.services.user_service import get_user_service
 
 
 class UserController(BaseController):
+    """
+    Provides endpoints for users.
+    """
+
     def __init__(self):
         super().__init__(get_user_service())
 
@@ -28,4 +36,8 @@ user_controller = UserController()
 
 
 def get_user_controller():
+    """
+    Returns the User Controller instance
+    """
+
     return user_controller

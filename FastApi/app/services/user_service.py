@@ -1,19 +1,22 @@
-from typing import Any
+"""
+This module contains the service layer for the User entity.
+"""
 
 from fastapi import HTTPException
-from peewee import Model
 
-from app.controllers.role_controller import get_role_controller
 from app.entities.role_entity import RoleEntity
 from app.entities.user_and_role_entity import UserAndRoleEntity
 from app.entities.user_entity import UserEntity
 from app.schemas.user import User, UserCreate, UserUpdate
 from app.schemas.user_and_role import UserAndRole
 from app.services.base_service import BaseService
-from app.services.user_and_role_service import get_user_and_role_service
 
 
 class UserService(BaseService):
+    """
+    Provides CRUD operations for the User entity.
+    """
+
     def __init__(self):
         super().__init__(entity_name="User", entity=UserEntity)
 
@@ -31,7 +34,11 @@ class UserService(BaseService):
         return update_role_ids(updated_model)
 
 
-def update_model(service: UserService, _id, model: UserUpdate) -> Model:
+def update_model(service: UserService, _id, model: UserUpdate) -> User:
+    """
+    Updates the User entity by its id ignoring default, unset, None
+    and values that are not direct fields from the entity.
+    """
     allowed_fields = {
         field: value
         for field, value in model.model_dump(
@@ -49,6 +56,10 @@ def update_model(service: UserService, _id, model: UserUpdate) -> Model:
 
 
 def validate_model(service: UserService, model: UserCreate | UserUpdate):
+    """
+    Validates the model before creating or updating a User entity.
+    """
+
     if model.role_ids:
         for role_id in model.role_ids:
             if not RoleEntity.get_or_none(RoleEntity.id == role_id):
@@ -65,6 +76,10 @@ def validate_model(service: UserService, model: UserCreate | UserUpdate):
 
 
 def update_role_ids(model: User):
+    """
+    Updates the roles of a User entity.
+    """
+
     if model.role_ids:
         existing_roles: list[UserAndRole] = list(
             UserAndRoleEntity.select().where(UserAndRoleEntity.user == model.id)
@@ -93,5 +108,8 @@ user_service = UserService()
 
 
 def get_user_service():
+    """
+    Returns the UserService instance.
+    """
+
     return user_service
-  

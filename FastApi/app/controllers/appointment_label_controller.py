@@ -1,3 +1,7 @@
+"""
+This module contains the AppointmentLabelController class, which handles appointment label requests.
+"""
+
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -10,6 +14,10 @@ from app.services.appointment_label_service import get_appointment_label_service
 
 
 class AppointmentLabelController(BaseController):
+    """
+    Provides endpoints for appointment labels.
+    """
+
     def __init__(self):
         super().__init__(get_appointment_label_service())
 
@@ -34,4 +42,8 @@ appointment_label_controller = AppointmentLabelController()
 
 
 def get_appointment_label_controller():
+    """
+    Returns the AppointmentLabelController instance.
+    """
+
     return appointment_label_controller

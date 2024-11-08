@@ -1,3 +1,7 @@
+"""
+This module contains the service layer for the Appointment entity.
+"""
+
 from datetime import date
 
 from fastapi import HTTPException
@@ -11,6 +15,10 @@ from app.services.base_service import BaseService
 
 
 class AppointmentService(BaseService):
+    """
+    Provides CRUD operations for the Appointment entity.
+    """
+
     def __init__(self):
         super().__init__(entity_name="Appointment", entity=AppointmentEntity)
 
@@ -53,4 +61,8 @@ appointment_service = AppointmentService()
 
 
 def get_appointment_service():
+    """
+    Returns the AppointmentService instance.
+    """
+
     return appointment_service
