@@ -1,7 +1,3 @@
-"""
-This module defines the base entity for Peewee models.
-"""
-
 from peewee import Model
 
 from app.db import get_db
@@ -9,7 +5,7 @@ from app.db import get_db
 
 class BaseEntity(Model):
     """
-    Represents a base entity for Peewee models.
+    BaseEntity represents a base entity in the database.
     """
 
     class Meta:

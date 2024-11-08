@@ -1,7 +1,3 @@
-"""
-This module contains the service layer for the Appointment entity.
-"""
-
 from datetime import date
 
 from fastapi import HTTPException
@@ -15,10 +11,6 @@ from app.services.base_service import BaseService
 
 
 class AppointmentService(BaseService):
-    """
-    Provides CRUD operations for the Appointment entity.
-    """
-
     def __init__(self):
         super().__init__(entity_name="Appointment", entity=AppointmentEntity)
 
@@ -32,10 +24,6 @@ class AppointmentService(BaseService):
 
 
 def validate_model(model: AppointmentCreate | AppointmentUpdate):
-    """
-    Validates the model before creating or updating an Appointment entity.
-    """
-
     if not AppointmentLabelEntity.get_or_none(model.label_id):
         raise HTTPException(
             status_code=400,
@@ -65,8 +53,4 @@ appointment_service = AppointmentService()
 
 
 def get_appointment_service():
-    """
-    Returns the AppointmentService instance.
-    """
-
     return appointment_service
