@@ -1,62 +1,96 @@
-"""
-This module defines the Pydantic model for a dentist.
-"""
+from datetime import date, time
 
-from pydantic import BaseModel, Field
+from fastapi import HTTPException
+from pydantic import Field, model_validator
+
+from app.entities.user_entity import UserEntity
+from app.schemas.base_schema import BaseSchema
 
 
-class Dentist(BaseModel):
+class Dentist(BaseSchema):
     """
-    Dentist schema for FastAPI application.
+    Schema for a dentist.
     Attributes:
-      id_dentist (int): Unique identifier for the dentist.
-      name (str): First name of the dentist, with a maximum length of 40 characters.
-      lastname (str): Last name of the dentist, with a maximum length of 40 characters.
-      license (str): License number of the dentist, with a maximum length of 40 characters.
-      id_state (int): Identifier for the state where the dentist is licensed.
-      inactive_days (int): Number of inactive days for the dentist.
-      id_user (int): Identifier for the associated user.
-      id_schedule (int): Identifier for the associated schedule.
-    Config:
-      orm_mode (bool): Enables ORM mode for compatibility with ORMs.
+      license (str): The license number of the dentist.
+      workday_start_time (time): The start time of the dentist's workday.
+      workday_end_time (time): The end time of the dentist's workday.
+      inactivity_start_date (date): The start date of the dentist's inactivity.
+      inactivity_end_date (date): The end date of the dentist's inactivity.
+      user_id (int): The unique identifier of the user.
     """
 
-    id_dentist: int
-    name: str = Field(..., max_length=40)
-    last_name: str = Field(..., max_length=40)
-    license: str = Field(..., max_length=40)
-    id_state: int
-    inactive_days: int
-    id_user: int
-    id_schedule: int
-
-    class Config:
-        """
-        Configuration class for Pydantic models.
-        """
-
-        orm_mode = True
+    id: int = None
+    license: str = None
+    workday_start_time: time = None
+    workday_end_time: time = None
+    inactivity_start_date: date | None = None
+    inactivity_end_date: date | None = None
+    user_id: int = None
 
 
-class DentistCreate(BaseModel):
-    """Dentist schema for creating a new dentist in the FastAPI application."""
+class DentistCreate(BaseSchema):
+    """
+    Schema for creating a new dentist.
+    Attributes:
+      license (str): The license number of the dentist, max length 255.
+      workday_start_time (time): The start time of the dentist's workday.
+      workday_end_time (time): The end time of the dentist's workday.
+      inactivity_start_date (date): The start date of the dentist's inactivity.
+      inactivity_end_date (date): The end date of the dentist's inactivity.
+      user_id (int): The unique identifier
+    """
 
-    name: str = Field(..., max_length=40)
-    last_name: str = Field(..., max_length=40)
-    license: str = Field(..., max_length=40)
-    id_state: int
-    inactive_days: int
-    id_user: int
-    id_schedule: int
+    license: str = Field(..., max_length=255)
+    workday_start_time: time = Field(...)
+    workday_end_time: time = Field(...)
+    inactivity_start_date: date | None = None
+    inactivity_end_date: date | None = None
+    user_id: int
+
+    # pylint: disable=no-self-argument
+
+    @model_validator(mode="before")
+    def validate_model(cls, values):
+        validate_model(values)
+        return values
+
+    # pylint: enable=no-self-argument
 
 
-class DentistUpdate(BaseModel):
-    """Dentist schema for updating an existing dentist in the FastAPI application."""
+class DentistUpdate(BaseSchema):
+    """
+    Schema for updating a dentist.
+    Attributes:
+      license (str): The license number of the dentist, max length 255.
+      workday_start_time (time): The start time of the dentist's workday.
+      workday_end_time (time): The end time of the dentist's workday.
+      inactivity_start_date (date): The start date of the dentist's inactivity.
+      inactivity_end_date (date): The end date of the dentist's inactivity.
+      user_id (int): The unique identifier
+    """
 
-    name: str = Field(None, max_length=40)
-    last_name: str = Field(None, max_length=40)
-    license: str = Field(None, max_length=40)
-    id_state: int
-    inactive_days: int
-    id_user: int
-    id_schedule: int
+    license: str = Field(None, max_length=255)
+    workday_start_time: time = None
+    workday_end_time: time = None
+    inactivity_start_date: date | None = None
+    inactivity_end_date: date | None = None
+    user_id: int = None
+
+    # pylint: disable=no-self-argument
+
+    @model_validator(mode="before")
+    def validate_model(cls, values):
+        validate_model(values)
+        return values
+
+    # pylint: enable=no-self-argument
+
+
+def validate_model(values):
+    user_id = values.get("user_id")
+
+    if not UserEntity.get_or_none(UserEntity.id == user_id):
+        raise HTTPException(
+            status_code=400,
+            detail=f"User with id '{user_id}' does not exist",
+        )
