@@ -1,5 +1,6 @@
 """
-This module contains a generic controller that provides standard CRUD routes for a FastAPI application.
+This module contains a generic controller that provides
+standard CRUD routes for a FastAPI application.
 """
 
 from typing import List

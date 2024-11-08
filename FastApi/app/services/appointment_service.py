@@ -32,6 +32,10 @@ class AppointmentService(BaseService):
 
 
 def validate_model(model: AppointmentCreate | AppointmentUpdate):
+    """
+    Validates the model before creating or updating an Appointment entity.
+    """
+
     if not AppointmentLabelEntity.get_or_none(model.label_id):
         raise HTTPException(
             status_code=400,
