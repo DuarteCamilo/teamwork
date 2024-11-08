@@ -1,3 +1,7 @@
+"""
+This module defines the Peewee model for the User entity.
+"""
+
 from peewee import AutoField, CharField
 
 from app.entities.base_entity import BaseEntity
@@ -5,7 +9,7 @@ from app.entities.base_entity import BaseEntity
 
 class UserEntity(BaseEntity):
     """
-    UserEntity represents a user entity in the database.
+    Represents a user entity in the database.
     """
 
     id = AutoField(primary_key=True)

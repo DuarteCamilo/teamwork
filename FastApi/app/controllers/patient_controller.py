@@ -1,3 +1,7 @@
+"""
+This module contains the PatientController class, which handles patient requests.
+"""
+
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -6,6 +10,10 @@ from app.services.patient_service import get_patient_service
 
 
 class PatientController(BaseController):
+    """
+    Provides endpoints for patients
+    """
+
     def __init__(self):
         super().__init__(get_patient_service())
 
@@ -28,4 +36,8 @@ patient_controller = PatientController()
 
 
 def get_patient_controller():
+    """
+    Returns the PatientController instance
+    """
+
     return patient_controller

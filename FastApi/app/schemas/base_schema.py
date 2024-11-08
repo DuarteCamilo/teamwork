@@ -1,8 +1,8 @@
-from datetime import date, datetime, time
+"""
+This module defines the base schema for Pydantic models.
+"""
 
 from pydantic import BaseModel
-
-from app.helpers.format_helper import date_to_str, datetime_to_str, time_to_str
 
 
 class BaseSchema(BaseModel):

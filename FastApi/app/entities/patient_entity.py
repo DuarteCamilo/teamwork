@@ -1,3 +1,7 @@
+"""
+This module defines the Peewee model for the Patient entity.
+"""
+
 from peewee import AutoField, CharField, DateTimeField, ForeignKeyField, IntegerField
 
 from app.entities.base_entity import BaseEntity
@@ -6,7 +10,7 @@ from app.entities.user_entity import UserEntity
 
 class PatientEntity(BaseEntity):
     """
-    PatientModel represents a patient entity in the database.
+    Represents a patient entity in the database.
     """
 
     id = AutoField(primary_key=True)

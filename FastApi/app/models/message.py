@@ -6,9 +6,6 @@ This module defines the MessageResponse class, which is used to represent a mess
 class MessageResponse:
     """
     A class used to represent a Message Response.
-
-    Attributes:
-        message (str): The message to be returned.
     """
 
     def __init__(self, message: str):

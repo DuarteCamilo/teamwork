@@ -1,3 +1,7 @@
+"""
+This module contains the DentistController class, which handles dentist requests.
+"""
+
 from fastapi import Body, Path
 
 from app.controllers.base_controller import BaseController
@@ -6,6 +10,10 @@ from app.services.dentist_service import get_dentist_service
 
 
 class DentistController(BaseController):
+    """
+    Provides endpoints for dentists.
+    """
+
     def __init__(self):
         super().__init__(get_dentist_service())
 
@@ -28,4 +36,8 @@ dentist_controller = DentistController()
 
 
 def get_dentist_controller():
+    """
+    Returns the DentistController instance
+    """
+
     return dentist_controller

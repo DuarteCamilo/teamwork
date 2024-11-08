@@ -1,3 +1,7 @@
+"""
+This module contains helper functions for migrations.
+"""
+
 import importlib
 from importlib import resources
 from types import ModuleType
@@ -7,11 +11,7 @@ from peewee import Model
 
 def get_entity_table_names(entities: set[Model]) -> set[str]:
     """
-    Returns the class names of the given set of classes.
-    Args:
-        classes (set[type]): A set of classes.
-    Returns:
-        set[str]: A set of class names.
+    Returns the table names of the given entities.
     """
 
     return {cls._meta.table_name for cls in entities}
@@ -19,9 +19,7 @@ def get_entity_table_names(entities: set[Model]) -> set[str]:
 
 def get_entity_modules() -> set[ModuleType]:
     """
-    Imports all modules in the entities folder and returns them.
-    Returns:
-        set[str]: A set of module names.
+    Imports all modules from the entities folder and returns them.
     """
 
     entities_path = resources.files("app.entities")
@@ -43,11 +41,7 @@ def get_entity_modules() -> set[ModuleType]:
 
 def get_remaining_entities(entities: set[Model]) -> set[Model]:
     """
-    Returns the class names of the remaining Peewee entities from entities folder that are not included in the given set.
-    Args:
-        included_entities (set[Model]): A set of Peewee entities.
-    Returns:
-        set[str]: A set of Peewee entity class names.
+    Returns the entities from the entities folder that are not in the given set of entities.
     """
 
     remaining_entities = set()

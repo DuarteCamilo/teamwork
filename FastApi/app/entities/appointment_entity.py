@@ -1,4 +1,8 @@
-from peewee import AutoField, DateField, ForeignKeyField, IntegerField
+"""
+This module defines the Peewee model for the Appointment entity.
+"""
+
+from peewee import AutoField, DateField, ForeignKeyField
 
 from app.entities.appointment_label_entity import AppointmentLabelEntity
 from app.entities.base_entity import BaseEntity
@@ -8,7 +12,7 @@ from app.entities.patient_entity import PatientEntity
 
 class AppointmentEntity(BaseEntity):
     """
-    Appointment represents an Appointment entity in the database.
+    Represents an Appointment entity in the database.
     """
 
     id = AutoField(primary_key=True)
