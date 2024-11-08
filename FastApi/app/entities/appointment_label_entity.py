@@ -1,3 +1,7 @@
+"""
+This module defines the Peewee model for the AppointmentLabel entity.
+"""
+
 from peewee import AutoField, CharField, TimeField
 
 from app.entities.base_entity import BaseEntity
@@ -5,7 +9,7 @@ from app.entities.base_entity import BaseEntity
 
 class AppointmentLabelEntity(BaseEntity):
     """
-    AppointmentLabel represents a Label Appointment entity in the database.
+    Represents a Label Appointment entity in the database.
     """
 
     id = AutoField(primary_key=True)

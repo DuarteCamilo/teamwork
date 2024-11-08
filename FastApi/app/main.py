@@ -1,3 +1,7 @@
+"""
+This module is the main entry point for the FastAPI application.
+"""
+
 # Don't remove peeweedbevolve import, it's necessary for migrations to work!
 
 from contextlib import asynccontextmanager
@@ -34,6 +38,10 @@ app.add_middleware(
 
 @app.exception_handler(RequestValidationError)
 async def custom_validation_exception_handler(_: Request, exc: RequestValidationError):
+    """
+    Custom exception handler for request validation errors.
+    """
+
     messages = [f'{error["loc"][1]}: {error["msg"]}' for error in exc.errors()]
     response_content = messages[0] if len(messages) == 1 else messages
     return JSONResponse(status_code=422, content={"detail": response_content})
@@ -41,6 +49,11 @@ async def custom_validation_exception_handler(_: Request, exc: RequestValidation
 
 @asynccontextmanager
 async def lifespan_wrapper(_: FastAPI):
+    """
+    Context manager that runs the database migrations before the application starts
+    and closes the database connection.
+    """
+
     ignored_entities = {BaseEntity}
     ignored_entity_table_names = get_entity_table_names(ignored_entities)
 
@@ -57,6 +70,10 @@ app.router.lifespan_context = lifespan_wrapper
 
 @app.get("/", include_in_schema=False)
 async def root():
+    """
+    Redirects the root URL to the API documentation.
+    """
+
     return RedirectResponse(url="/docs")
 
 
@@ -95,8 +112,3 @@ app.include_router(
     prefix="/roles",
     tags=["Roles"],
 )
-
-# if __name__ == "__main__":
-#     import uvicorn
-
-#     uvicorn.run(app, host="0.0.0.0", port=8080)

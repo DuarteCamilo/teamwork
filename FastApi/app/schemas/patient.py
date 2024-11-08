@@ -1,18 +1,19 @@
+"""
+This module defines Pydantic models for patient dtos.
+"""
+
 from datetime import datetime
 
-from pydantic import Field
+from pydantic import Field, validator
 
+from app.helpers.schemas_helper import get_appointment_ids
+from app.schemas.appointment import Appointment
 from app.schemas.base_schema import BaseSchema
 
 
 class Patient(BaseSchema):
     """
     Schema for a patient.
-    Attributes:
-      dni (int): The DNI of the patient.
-      address (str): The address of the patient.
-      admission_date (date): The departure date of the patient.
-      user_id (int): The unique identifier of the user.
     """
 
     id: int = None
@@ -20,16 +21,25 @@ class Patient(BaseSchema):
     address: str = None
     admission_date: datetime = None
     user_id: int = None
+    appointments: list[Appointment] = Field(None, exclude=True)
+    appointment_ids: set[int] = None
+
+    # pylint: disable=no-self-argument
+
+    @validator("appointment_ids", pre=True, always=True)
+    def set_appointment_ids(v, values):
+        """
+        Set the appointment ids.
+        """
+
+        return get_appointment_ids(values)
+
+    # pylint: enable=no-self-argument
 
 
 class PatientCreate(BaseSchema):
     """
     Schema for creating a new patient.
-    Attributes:
-      dni (int): The DNI of the patient.
-      address (str): The address of the patient, max length 255.
-      admission_date (date): The departure date of the patient,defaults to the current date and time.
-      user_id (int): The unique identifier of the user.
     """
 
     dni: int
@@ -41,11 +51,6 @@ class PatientCreate(BaseSchema):
 class PatientUpdate(BaseSchema):
     """
     Schema for updating a patient.
-    Attributes:
-      dni (int): The DNI of the patient.
-      address (str): The address of the patient, max length 255.
-      admission_date (date): The departure date of the patient.
-      user_id (int): The unique identifier of the user.
     """
 
     dni: int = None

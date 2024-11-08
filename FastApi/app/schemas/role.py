@@ -1,25 +1,40 @@
-from pydantic import Field
+"""
+This module defines Pydantic models for role dtos.
+"""
+
+from pydantic import Field, validator
 
 from app.schemas.base_schema import BaseSchema
+from app.schemas.user_and_role import UserAndRole
 
 
 class Role(BaseSchema):
     """
     Schema for a role.
-    Attributes:
-      id (int): The unique identifier for the role.
-      name (str): The name of the role.
     """
 
     id: int = None
     name: str = None
+    users: list[UserAndRole] = Field(None, exclude=True)
+    user_ids: set[int] = None
+
+    # pylint: disable=no-self-argument
+
+    @validator("user_ids", pre=True, always=True)
+    def set_user_ids(v, values):
+        """
+        Set the user ids.
+        """
+
+        users: list[UserAndRole] = values.get("users", [])
+        return {user.user_id for user in users}
+
+    # pylint: enable=no-self-argument
 
 
 class RoleCreate(BaseSchema):
     """
     Schema for creating a new role.
-    Attributes:
-      name (str): The name of the role. Maximum length is 127 characters.
     """
 
     name: str = Field(..., max_length=127)
@@ -28,8 +43,6 @@ class RoleCreate(BaseSchema):
 class RoleUpdate(BaseSchema):
     """
     Schema for updating a role
-    Attributes:
-      name (str): The name of the role. Maximum length is 127 characters.
     """
 
     name: str = Field(None, max_length=127)
