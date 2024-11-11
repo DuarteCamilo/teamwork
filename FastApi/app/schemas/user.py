@@ -3,6 +3,8 @@ from pydantic import Field, validator
 from app.schemas.base_schema import BaseSchema
 from app.schemas.role import Role
 from app.schemas.user_and_role import UserAndRole
+from app.schemas.patient import Patient
+from app.schemas.dentist import Dentist
 
 
 class User(BaseSchema):
@@ -25,16 +27,21 @@ class User(BaseSchema):
     password: str = None
     name: str = None
     lastname: str = None
-    roles: list[UserAndRole] = Field(default_factory=None, exclude=True)
-    role_ids: list[int] = None
+    is_admin: bool = None
+    patient_id: int = None
+    dentist_id: int = None
+    
+    
+    # roles: list[UserAndRole] = Field(default_factory=None, exclude=True)
+    # role_ids: list[int] = None
     # appointments: list[Appointment] = Field(default_factory=None, exclude=True)
     # appointment_ids: list[int] = None
 
     # pylint: disable=no-self-argument
-    @validator("role_ids", pre=True, always=True)
-    def set_role_ids(v, values):
-        roles: list[UserAndRole] = values.get("roles", [])
-        return {role.role_id for role in roles}
+    # @validator("role_ids", pre=True, always=True)
+    # def set_role_ids(v, values):
+    #     roles: list[UserAndRole] = values.get("roles", [])
+    #     return {role.role_id for role in roles}
 
     # @validator("appointment_ids", pre=True, always=True)
     # def set_appointment_ids(v, values):
@@ -77,3 +84,8 @@ class UserUpdate(BaseSchema):
     name: str = Field(None, max_length=255)
     lastname: str = Field(None, max_length=255)
     role_ids: list[int] = None
+
+
+class LoginUser(BaseSchema):
+    email: str = Field(None, max_length=320)
+    password: str = Field(None, max_length=255)
