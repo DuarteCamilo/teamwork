@@ -1,9 +1,8 @@
-from peewee import AutoField, DateField, ForeignKeyField, IntegerField
-
 from app.entities.appointment_label_entity import AppointmentLabelEntity
 from app.entities.base_entity import BaseEntity
 from app.entities.dentist_entity import DentistEntity
 from app.entities.patient_entity import PatientEntity
+from peewee import AutoField, DateField, ForeignKeyField, IntegerField
 
 
 class AppointmentEntity(BaseEntity):

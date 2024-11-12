@@ -14,7 +14,9 @@ class DentistEntity(BaseEntity):
     workday_end_time = TimeField()
     inactivity_start_date = DateField(null=True)
     inactivity_end_date = DateField(null=True)
-    user = ForeignKeyField(UserEntity, backref="dentists", on_delete="CASCADE")
+    user = ForeignKeyField(
+        UserEntity, backref="dentists", unique=True, on_delete="CASCADE"
+    )
 
     class Meta:
         """

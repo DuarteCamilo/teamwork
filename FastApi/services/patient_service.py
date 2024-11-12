@@ -26,6 +26,12 @@ def validate_model(service: PatientService, model: PatientCreate | PatientUpdate
             detail=f"User with id '{model.user_id}' does not exist",
         )
 
+    if PatientEntity.get_or_none(PatientEntity.user == model.user_id):
+        raise HTTPException(
+            status_code=400,
+            detail=f"User with id '{model.user_id}' is already associated with a patient",
+        )
+
     if PatientEntity.get_or_none(PatientEntity.dni == model.dni):
         raise HTTPException(
             status_code=400,

@@ -3,11 +3,6 @@
 from contextlib import asynccontextmanager
 
 import peeweedbevolve
-from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
-
 from app.controllers.appointment_controller import get_appointment_controller
 from app.controllers.appointment_label_controller import (
     get_appointment_label_controller,
@@ -20,6 +15,11 @@ from app.db import get_db
 from app.entities.base_entity import BaseEntity
 from app.helpers.migration_helper import get_entity_modules, get_entity_table_names
 from app.routes.login_route import get_login_router
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, RedirectResponse
+
+from fastapi import FastAPI, Request
 
 db = get_db()
 app = FastAPI(title="Teamwork API")
@@ -59,6 +59,7 @@ app.router.lifespan_context = lifespan_wrapper
 @app.get("/", include_in_schema=False)
 async def root():
     return RedirectResponse(url="/docs")
+
 
 app.include_router(
     get_login_router(),

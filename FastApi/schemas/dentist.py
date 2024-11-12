@@ -1,8 +1,7 @@
 from datetime import date, time
 
-from app.entities.user_entity import UserEntity
 from app.schemas.base_schema import BaseSchema
-from pydantic import Field, model_validator
+from pydantic import Field
 
 from fastapi import HTTPException
 
@@ -47,15 +46,6 @@ class DentistCreate(BaseSchema):
     inactivity_end_date: date | None = None
     user_id: int
 
-    # pylint: disable=no-self-argument
-
-    @model_validator(mode="before")
-    def validate_model(cls, values):
-        validate_model(values)
-        return values
-
-    # pylint: enable=no-self-argument
-
 
 class DentistUpdate(BaseSchema):
     """
@@ -75,22 +65,3 @@ class DentistUpdate(BaseSchema):
     inactivity_start_date: date | None = None
     inactivity_end_date: date | None = None
     user_id: int = None
-
-    # pylint: disable=no-self-argument
-
-    @model_validator(mode="before")
-    def validate_model(cls, values):
-        validate_model(values)
-        return values
-
-    # pylint: enable=no-self-argument
-
-
-def validate_model(values):
-    user_id = values.get("user_id")
-
-    if not UserEntity.get_or_none(UserEntity.id == user_id):
-        raise HTTPException(
-            status_code=400,
-            detail=f"User with id '{user_id}' does not exist",
-        )
