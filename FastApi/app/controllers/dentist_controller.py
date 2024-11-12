@@ -1,8 +1,8 @@
-from fastapi import Body, Path
-
 from app.controllers.base_controller import BaseController
 from app.schemas.dentist import Dentist, DentistCreate, DentistUpdate
 from app.services.dentist_service import get_dentist_service
+
+from fastapi import Body, Path
 
 
 class DentistController(BaseController):

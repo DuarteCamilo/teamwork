@@ -1,6 +1,5 @@
-from peewee import Model
-
 from app.db import get_db
+from peewee import Model
 
 
 class BaseEntity(Model):

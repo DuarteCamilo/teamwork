@@ -12,7 +12,9 @@ class PatientEntity(BaseEntity):
     dni = IntegerField()
     address = CharField(max_length=255)
     admission_date = DateTimeField()
-    user = ForeignKeyField(UserEntity, backref="patients", on_delete="CASCADE")
+    user = ForeignKeyField(
+        UserEntity, backref="patients", unique=True, on_delete="CASCADE"
+    )
 
     class Meta:
         """

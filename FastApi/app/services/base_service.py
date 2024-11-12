@@ -1,8 +1,8 @@
-from fastapi import HTTPException
+from app.models.message import MessageResponse
 from peewee import Model
 from pydantic import BaseModel
 
-from app.models.message import MessageResponse
+from fastapi import HTTPException
 
 
 class BaseService:

@@ -1,8 +1,8 @@
-from fastapi import Body, Path
-
 from app.controllers.base_controller import BaseController
 from app.schemas.role import Role, RoleCreate, RoleUpdate
 from app.services.role_service import get_role_service
+
+from fastapi import Body, Path
 
 
 class RoleController(BaseController):
