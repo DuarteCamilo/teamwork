@@ -1,4 +1,6 @@
 from app.schemas.base_schema import BaseSchema
+from app.schemas.dentist import Dentist
+from app.schemas.patient import Patient
 from pydantic import Field, validator
 
 
@@ -23,21 +25,23 @@ class User(BaseSchema):
     name: str = None
     lastname: str = None
     is_admin: bool = None
-
-    # roles: list[UserAndRole] = Field(default_factory=None, exclude=True)
-    # role_ids: list[int] = None
-    # appointments: list[Appointment] = Field(default_factory=None, exclude=True)
-    # appointment_ids: list[int] = None
+    patients: list[Patient] = Field(None, exclude=True)
+    patient_id: int | None = None
+    dentists: list[Dentist] = Field(None, exclude=True)
+    dentist_id: int | None = None
 
     # pylint: disable=no-self-argument
-    # @validator("role_ids", pre=True, always=True)
-    # def set_role_ids(v, values):
-    #     roles: list[UserAndRole] = values.get("roles", [])
-    #     return {role.role_id for role in roles}
 
-    # @validator("appointment_ids", pre=True, always=True)
-    # def set_appointment_ids(v, values):
-    #     return [appointment.id for appointment in values.get("appointments", [])]
+    @validator("patient_id", pre=True, always=True)
+    def set_patient_id(v, values):
+        patients: list[Patient] = values.get("patients")
+        return patients[0].id if patients else None
+
+    @validator("dentist_id", pre=True, always=True)
+    def set_dentist_id(v, values):
+        dentists: list[Dentist] = values.get("dentists")
+        print(bool(dentists))
+        return dentists[0].id if dentists else None
 
     # pylint: enable=no-self-argument
 
@@ -57,6 +61,7 @@ class UserCreate(BaseSchema):
     password: str = Field(..., max_length=255)
     name: str = Field(..., max_length=255)
     lastname: str = Field(..., max_length=255)
+    is_admin: bool = Field(False)
 
 
 class UserUpdate(BaseSchema):
@@ -74,6 +79,7 @@ class UserUpdate(BaseSchema):
     password: str = Field(None, max_length=255)
     name: str = Field(None, max_length=255)
     lastname: str = Field(None, max_length=255)
+    is_admin: bool = None
 
 
 class LoginUser(BaseSchema):

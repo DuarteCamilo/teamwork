@@ -1,6 +1,5 @@
-from peewee import AutoField, CharField
-
 from app.entities.base_entity import BaseEntity
+from peewee import AutoField, CharField
 
 
 class RoleEntity(BaseEntity):

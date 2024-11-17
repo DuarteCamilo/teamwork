@@ -1,13 +1,13 @@
 from datetime import date
 
-from fastapi import HTTPException
-
 from app.entities.appointment_entity import AppointmentEntity
 from app.entities.appointment_label_entity import AppointmentLabelEntity
 from app.entities.dentist_entity import DentistEntity
 from app.entities.patient_entity import PatientEntity
 from app.schemas.appointment import Appointment, AppointmentCreate, AppointmentUpdate
 from app.services.base_service import BaseService
+
+from fastapi import HTTPException
 
 
 class AppointmentService(BaseService):

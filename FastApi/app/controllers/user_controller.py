@@ -1,8 +1,8 @@
-from fastapi import Body, Path
-
 from app.controllers.base_controller import BaseController
 from app.schemas.user import User, UserCreate, UserUpdate
 from app.services.user_service import get_user_service
+
+from fastapi import Body, Path
 
 
 class UserController(BaseController):
