@@ -1,5 +1,3 @@
-from fastapi import Body, Path
-
 from app.controllers.base_controller import BaseController
 from app.schemas.appointment_label import (
     AppointmentLabel,
@@ -7,6 +5,8 @@ from app.schemas.appointment_label import (
     AppointmentLabelUpdate,
 )
 from app.services.appointment_label_service import get_appointment_label_service
+
+from fastapi import Body, Path
 
 
 class AppointmentLabelController(BaseController):

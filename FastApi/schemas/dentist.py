@@ -1,8 +1,7 @@
 from datetime import date, time
 
-from app.entities.user_entity import UserEntity
 from app.schemas.base_schema import BaseSchema
-from pydantic import Field, model_validator
+from pydantic import Field
 
 from fastapi import HTTPException
 

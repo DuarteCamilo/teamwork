@@ -1,12 +1,8 @@
 from typing import Any
 
-from app.controllers.role_controller import get_role_controller
-from app.entities.role_entity import RoleEntity
-from app.entities.user_and_role_entity import UserAndRoleEntity
 from app.entities.user_entity import UserEntity
 from app.schemas.user import User, UserCreate, UserUpdate
 from app.services.base_service import BaseService
-from app.services.user_and_role_service import get_user_and_role_service
 from peewee import Model
 
 from fastapi import HTTPException
