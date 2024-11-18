@@ -1,7 +1,8 @@
 from datetime import time
 
-from app.schemas.base_schema import BaseSchema
 from pydantic import Field
+
+from app.schemas.base_schema import BaseSchema
 
 
 class AppointmentLabel(BaseSchema):

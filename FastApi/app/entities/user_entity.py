@@ -1,5 +1,6 @@
-from app.entities.base_entity import BaseEntity
 from peewee import AutoField, BooleanField, CharField
+
+from app.entities.base_entity import BaseEntity
 
 
 class UserEntity(BaseEntity):

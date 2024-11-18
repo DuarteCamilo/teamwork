@@ -1,10 +1,10 @@
-from app.entities.user_entity import UserEntity
-from app.schemas.user import LoginUser
-
 from fastapi import HTTPException
 
+from app.entities.user_entity import UserEntity
+from app.schemas.user import LoginUser, User
 
-def login(login_user: LoginUser):
+
+def login(login_user: LoginUser) -> User:
     """
     Authenticate a user by their email and password.
     Args:
@@ -15,15 +15,12 @@ def login(login_user: LoginUser):
         HTTPException: If the credentials are invalid, raises an Unauthorized exception.
     """
 
-    # Buscar al usuario en la base de datos por el email
     user = UserEntity.get_or_none(
-        UserEntity.email == login_user.email
-        and UserEntity.password == login_user.password
+        (UserEntity.email == login_user.email)
+        & (UserEntity.password == login_user.password)
     )
 
     if not user:
-        raise HTTPException(
-            status_code=401, detail="Invalid credentials: User not found."
-        )
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     return user

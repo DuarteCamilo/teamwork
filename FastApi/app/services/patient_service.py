@@ -1,9 +1,9 @@
+from fastapi import HTTPException
+
 from app.entities.patient_entity import PatientEntity
 from app.entities.user_entity import UserEntity
 from app.schemas.patient import PatientCreate, PatientUpdate
 from app.services.base_service import BaseService
-
-from fastapi import HTTPException
 
 
 class PatientService(BaseService):
@@ -24,6 +24,12 @@ def validate_model(service: PatientService, model: PatientCreate | PatientUpdate
         raise HTTPException(
             status_code=400,
             detail=f"User with id '{model.user_id}' does not exist",
+        )
+
+    if PatientEntity.get_or_none(PatientEntity.user == model.user_id):
+        raise HTTPException(
+            status_code=400,
+            detail=f"User with id '{model.user_id}' is already associated with a patient",
         )
 
     if PatientEntity.get_or_none(PatientEntity.dni == model.dni):

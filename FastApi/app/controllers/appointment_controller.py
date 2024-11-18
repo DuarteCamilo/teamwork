@@ -1,8 +1,8 @@
+from fastapi import Body, Path
+
 from app.controllers.base_controller import BaseController
 from app.schemas.appointment import Appointment, AppointmentCreate, AppointmentUpdate
 from app.services.appointment_service import get_appointment_service
-
-from fastapi import Body, Path
 
 
 class AppointmentController(BaseController):
