@@ -1,7 +1,7 @@
+from fastapi import APIRouter
+
 from app.schemas.user import LoginUser, User
 from app.services import login_service
-
-from fastapi import APIRouter
 
 login_router = APIRouter()
 

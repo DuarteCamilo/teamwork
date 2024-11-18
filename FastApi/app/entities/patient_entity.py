@@ -1,6 +1,7 @@
+from peewee import AutoField, CharField, DateTimeField, ForeignKeyField, IntegerField
+
 from app.entities.base_entity import BaseEntity
 from app.entities.user_entity import UserEntity
-from peewee import AutoField, CharField, DateTimeField, ForeignKeyField, IntegerField
 
 
 class PatientEntity(BaseEntity):
@@ -12,7 +13,9 @@ class PatientEntity(BaseEntity):
     dni = IntegerField()
     address = CharField(max_length=255)
     admission_date = DateTimeField()
-    user = ForeignKeyField(UserEntity, backref="patients", on_delete="CASCADE")
+    user = ForeignKeyField(
+        UserEntity, backref="patients", unique=True, on_delete="CASCADE"
+    )
 
     class Meta:
         """

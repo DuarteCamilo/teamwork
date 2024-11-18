@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from app.schemas.base_schema import BaseSchema
 from pydantic import Field
+
+from app.schemas.base_schema import BaseSchema
 
 
 class Patient(BaseSchema):

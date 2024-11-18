@@ -1,9 +1,9 @@
 from typing import List
 
-from app.services.base_service import BaseService
+from fastapi import APIRouter, Body, Path
 from pydantic import BaseModel
 
-from fastapi import APIRouter, Body, Path
+from app.services.base_service import BaseService
 
 
 class BaseController:

@@ -1,6 +1,7 @@
+from peewee import AutoField, CharField, DateField, ForeignKeyField, TimeField
+
 from app.entities.base_entity import BaseEntity
 from app.entities.user_entity import UserEntity
-from peewee import AutoField, CharField, DateField, ForeignKeyField, TimeField
 
 
 class DentistEntity(BaseEntity):
@@ -14,7 +15,9 @@ class DentistEntity(BaseEntity):
     workday_end_time = TimeField()
     inactivity_start_date = DateField(null=True)
     inactivity_end_date = DateField(null=True)
-    user = ForeignKeyField(UserEntity, backref="dentists", on_delete="CASCADE")
+    user = ForeignKeyField(
+        UserEntity, backref="dentists", unique=True, on_delete="CASCADE"
+    )
 
     class Meta:
         """

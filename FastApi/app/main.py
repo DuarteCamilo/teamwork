@@ -3,6 +3,11 @@
 from contextlib import asynccontextmanager
 
 import peeweedbevolve
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, RedirectResponse
+
 from app.controllers.appointment_controller import get_appointment_controller
 from app.controllers.appointment_label_controller import (
     get_appointment_label_controller,
@@ -15,11 +20,6 @@ from app.db import get_db
 from app.entities.base_entity import BaseEntity
 from app.helpers.migration_helper import get_entity_modules, get_entity_table_names
 from app.routes.login_route import get_login_router
-from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
-
-from fastapi import FastAPI, Request
 
 db = get_db()
 app = FastAPI(title="Teamwork API")
@@ -97,13 +97,8 @@ app.include_router(
     tags=["Appointment Labels"],
 )
 
-app.include_router(
-    get_role_controller().get_router(),
-    prefix="/roles",
-    tags=["Roles"],
-)
-
-# if __name__ == "__main__":
-#     import uvicorn
-
-#     uvicorn.run(app, host="0.0.0.0", port=8080)
+# app.include_router(
+#     get_role_controller().get_router(),
+#     prefix="/roles",
+#     tags=["Roles"],
+# )
