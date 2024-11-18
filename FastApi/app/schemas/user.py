@@ -35,9 +35,16 @@ class User(BaseSchema):
     #     roles: list[UserAndRole] = values.get("roles", [])
     #     return {role.role_id for role in roles}
 
-    # @validator("appointment_ids", pre=True, always=True)
-    # def set_appointment_ids(v, values):
-    #     return [appointment.id for appointment in values.get("appointments", [])]
+    @validator("patient_id", pre=True, always=True)
+    def set_patient_id(v, values):
+        patients: list[Patient] = values.get("patients")
+        return patients[0].id if patients else None
+
+    @validator("dentist_id", pre=True, always=True)
+    def set_dentist_id(v, values):
+        dentists: list[Dentist] = values.get("dentists")
+        print(bool(dentists))
+        return dentists[0].id if dentists else None
 
     # pylint: enable=no-self-argument
 
