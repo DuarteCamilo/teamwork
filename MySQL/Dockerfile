@@ -1,5 +1,6 @@
 FROM mysql:8.0
 
+ENV TZ=America/Bogota
 ENV MYSQL_ROOT_PASSWORD root
 ENV MYSQL_DATABASE adios_caries
 ENV MYSQL_USER adios_caries

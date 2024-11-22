@@ -1,4 +1,4 @@
-from datetime import date as dt_date
+from datetime import datetime
 
 from app.schemas.base_schema import BaseSchema
 
@@ -15,7 +15,7 @@ class Appointment(BaseSchema):
     """
 
     id: int = None
-    date: dt_date = None
+    date: datetime = None
     label_id: int = None
     patient_id: int = None
     dentist_id: int = None
@@ -31,7 +31,7 @@ class AppointmentCreate(BaseSchema):
       dentist_id (int): The dentist ID associated with the appointment.
     """
 
-    date: dt_date
+    date: datetime
     label_id: int
     patient_id: int
     dentist_id: int
@@ -53,7 +53,7 @@ class AppointmentUpdate(BaseSchema):
       dentist_id (int): The dentist ID associated with the appointment.
     """
 
-    date: dt_date = None
+    date: datetime = None
     label_id: int = None
     patient_id: int = None
     dentist_id: int = None
