@@ -9,6 +9,8 @@ services:
       - 3306:3306
     volumes:
       - ./MySQL/volumes:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro  
     hostname: adios_caries
     networks:
       - net_adios_caries
@@ -17,6 +19,8 @@ services:
         interval: 30s
         timeout: 10s
         retries: 5
+    environment:
+        - TZ=America/Bogota
 # --------------------------------------------------------------------
   # - The adminer is a tool for managing content in databases.
   adminer:
@@ -27,6 +31,8 @@ services:
       - 8080:8080
     networks:
       - net_adios_caries
+    environment:
+      - TZ=America/Bogota
 # --------------------------------------------------------------------
   # - fastapi refers to the container where the application backend will be stored.
   fastapi:
@@ -43,6 +49,8 @@ services:
         condition: service_healthy
     networks:
       - net_adios_caries
+    environment:
+      - TZ=America/Bogota
 # --------------------------------------------------------------------
 
 networks:

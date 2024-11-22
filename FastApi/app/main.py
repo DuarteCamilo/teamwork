@@ -97,12 +97,6 @@ app.include_router(
     tags=["Appointment Labels"],
 )
 
-app.include_router(
-    get_role_controller().get_router(),
-    prefix="/roles",
-    tags=["Roles"],
-)
-
 # if __name__ == "__main__":
 #     import uvicorn
 

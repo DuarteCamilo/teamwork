@@ -15,3 +15,4 @@ class BaseSchema(BaseModel):
         """
 
         orm_mode = True
+        from_attributes = True  # Add this line
