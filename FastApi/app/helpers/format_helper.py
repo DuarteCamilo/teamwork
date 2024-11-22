@@ -3,9 +3,17 @@ from datetime import date, datetime, time
 import pytz
 from dateutil import parser
 
+def convert_to_local_time(utc_time: datetime, timezone: str = 'America/Bogota') -> datetime:
+    """
+    Converts a UTC datetime to a datetime object in the specified local timezone.
 
-def get_colombian_timezone():
-    return pytz.timezone("America/Bogota")
+    :param utc_time: The datetime object in UTC to be converted.
+    :param timezone: The target timezone (default is 'America/Bogota').
+    :return: A datetime object in the specified timezone.
+    """
+    local_timezone = pytz.timezone(timezone)
+    local_time = utc_time.astimezone(local_timezone)
+    return local_time
 
 
 def datetime_to_str(_datetime: date) -> str:

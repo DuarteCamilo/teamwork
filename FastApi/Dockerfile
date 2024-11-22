@@ -7,6 +7,8 @@ WORKDIR /
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y mariadb-client && pip install mysqlclient
 
+ENV TZ=America/Bogota
+
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
