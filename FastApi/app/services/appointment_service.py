@@ -28,15 +28,25 @@ class AppointmentService(BaseService):
 
 def get_appointments_dentist(_id: int) -> list:
     appointments = AppointmentEntity.select().where(AppointmentEntity.dentist == _id)
+    appointments_data = []
 
     if not appointments:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No appointments found for dentist with id {_id}"
-        )
+        return appointments_data
 
     appointments_data = [Appointment.from_orm(appointment) for appointment in appointments]
     return appointments_data
+
+def get_appointments_patient(_id: int) -> list:
+    appointments = AppointmentEntity.select().where(AppointmentEntity.patient == _id)
+    appointments_data = []
+
+    if not appointments:
+        return appointments_data
+        
+
+    appointments_data = [Appointment.from_orm(appointment) for appointment in appointments]
+    return appointments_data
+
 
 def validate_model(model: AppointmentCreate | AppointmentUpdate):
     if not AppointmentLabelEntity.get_or_none(model.label_id):
@@ -58,7 +68,10 @@ def validate_model(model: AppointmentCreate | AppointmentUpdate):
         )
 
     now = convert_to_local_time(datetime.now()) 
-    appointments = get_appointments_dentist(model.dentist_id)
+    dentist = DentistEntity.get_by_id(model.dentist_id)
+    appointments_dentist = get_appointments_dentist(model.dentist_id)
+    appointments_patient = get_appointments_patient(model.patient_id)
+    appointment_label = AppointmentLabelEntity.get_or_none(model.label_id)
 
     if convert_to_local_time(model.date) < now:
         raise HTTPException(
@@ -66,7 +79,8 @@ def validate_model(model: AppointmentCreate | AppointmentUpdate):
             detail="Date cannot be in the past",
         )
 
-    for appoint in appointments:
+
+    for appoint in appointments_patient:
        appointment_label = AppointmentLabelEntity.get_or_none(appoint.label_id)
        if not appointment_label:
            continue
@@ -86,7 +100,48 @@ def validate_model(model: AppointmentCreate | AppointmentUpdate):
            if model.date.time() >= start_time and model.date.time() < end_time:
                raise HTTPException(
                    status_code=400,
-                   detail="Appointment time conflicts with an existing appointment."
+                   detail="Appointment time conflicts with an existing patient's appointment."
+               )
+    
+    if convert_to_local_time(model.date).date() >= dentist.inactivity_start_date and convert_to_local_time(model.date).date() < dentist.inactivity_end_date:
+        raise HTTPException(
+            status_code=400,
+            detail="The dentist is not availible.",
+        )
+
+    start_timedelta_schedule = timedelta(hours=model.date.hour, minutes=model.date.minute, seconds=model.date.second)
+    duration_timedelta_schedule = timedelta(hours=appointment_label.duration.hour, minutes=appointment_label.duration.minute, seconds=appointment_label.duration.second)
+    end_timedelta = start_timedelta_schedule + duration_timedelta_schedule
+
+    workday_end_timedelta = timedelta(hours=dentist.workday_end_time.hour, minutes=dentist.workday_end_time.minute, seconds=dentist.workday_end_time.second)
+
+    if convert_to_local_time(model.date).time() < dentist.workday_start_time or end_timedelta > workday_end_timedelta:
+        raise HTTPException(
+            status_code=400,
+            detail="Appointment is outside of the dentist's daily schedule.",
+        )
+
+    for appoint in appointments_dentist:
+       appointment_label = AppointmentLabelEntity.get_or_none(appoint.label_id)
+       if not appointment_label:
+           continue
+
+       duration_time = appointment_label.duration
+
+       start_time = appoint.date.time()
+       start_date = appoint.date.date()
+
+       start_timedelta = timedelta(hours=start_time.hour, minutes=start_time.minute, seconds=start_time.second)
+       duration_timedelta = timedelta(hours=duration_time.hour, minutes=duration_time.minute, seconds=duration_time.second)
+       end_timedelta = start_timedelta + duration_timedelta
+
+       end_time = (datetime.min + end_timedelta).time()
+
+       if model.date.date() == start_date:
+           if model.date.time() >= start_time and model.date.time() < end_time:
+               raise HTTPException(
+                   status_code=400,
+                   detail="Appointment time conflicts with an existing dentist's appointment."
                )
     
 appointment_service = AppointmentService()
