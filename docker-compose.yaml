@@ -38,7 +38,6 @@ services:
   fastapi:
     build: 
       context: ./FastApi
-
       dockerfile: Dockerfile
     container_name: backend
     restart: always
@@ -52,7 +51,19 @@ services:
     environment:
       - TZ=America/Bogota
 # --------------------------------------------------------------------
-
+  # - The nginx container is used to serve the backend trough HTTPS with a OpenSSL certificate.
+  nginx:
+    build:
+      context: ./Nginx
+      dockerfile: Dockerfile
+    container_name: nginx_adios_caries
+    ports:
+      - "443:443"
+    depends_on:
+      - fastapi
+    networks:
+      - net_adios_caries
+# --------------------------------------------------------------------
 networks:
   net_adios_caries:
       driver: bridge
