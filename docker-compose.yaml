@@ -1,16 +1,16 @@
 services:
   db:
-    build: 
+    build:
       context: ./MySQL
       dockerfile: Dockerfile
-    container_name: database
+    container_name: db_adios_caries
     restart: always
     ports:
       - 3306:3306
     volumes:
       - ./MySQL/volumes:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro  
+      - /etc/timezone:/etc/timezone:ro
     hostname: adios_caries
     networks:
       - net_adios_caries
@@ -22,24 +22,12 @@ services:
     environment:
         - TZ=America/Bogota
 # --------------------------------------------------------------------
-  # - The adminer is a tool for managing content in databases.
-  adminer:
-    image: adminer
-    container_name: adminer_adios_caries
-    restart: always
-    ports:
-      - 8080:8080
-    networks:
-      - net_adios_caries
-    environment:
-      - TZ=America/Bogota
-# --------------------------------------------------------------------
   # - fastapi refers to the container where the application backend will be stored.
   fastapi:
-    build: 
+    build:
       context: ./FastApi
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: api_adios_caries
     restart: always
     ports:
       - "9000:9000"
