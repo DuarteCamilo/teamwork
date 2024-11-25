@@ -22,7 +22,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi import FastAPI, Request
 
 db = get_db()
-app = FastAPI(title="Teamwork API")
+app = FastAPI(title="Adios Caries API")
 
 app.add_middleware(
     CORSMiddleware,
